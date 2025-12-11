@@ -1,0 +1,7 @@
+************************************* Invoked: lun. dic. 8 20:28:22 2025
+[0] Arguments: C:\Users\Facundo\AppData\Local\Temp\msys2-installer.exe, install, --root, C:\msys64, --confirm-command
+[6] Operations sanity check succeeded.
+[17] Using metadata cache from "C:/Users/Facundo/AppData/Local/cache\\qt-installer-framework\\d75f1c19-3379-3717-ae8d-1404b51494a9"
+[18] Found 0 cached items.
+[20] Loaded control script ":/metadata/installer-config/control_js.js"
+[20] TargetDirectoryInUse : Error : The directory you selected already exists and contains an installation. Choose a different target for installation.
