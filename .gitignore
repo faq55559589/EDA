@@ -1,0 +1,17 @@
+# Archivos ejecutables
+*.exe
+
+# Archivos objeto
+*.o
+*.obj
+
+# Archivos de VS Code
+.vscode/
+*.json
+
+# Archivos de log
+*.txt
+*.log
+
+# Archivos temporales
+*.tmp
