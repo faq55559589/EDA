@@ -1,4 +1,4 @@
-#include "Ej3.h"
+#include "LabDePrueba.h"
 #include <iostream>
 using namespace std;
 
@@ -7,29 +7,31 @@ struct Nodo {
     int dato;
     Nodo* der;
     Nodo* izq;
+    Nodo* padre;
 };
 static Nodo* arbol = NULL;  
 
-Nodo* crearNodo(int n) {
+Nodo* crearNodo(int n, Nodo* padre) {
     Nodo* nuevoNodo = new Nodo();
     nuevoNodo->dato = n;
     nuevoNodo->der = NULL;
     nuevoNodo->izq = NULL;
+    nuevoNodo->padre = padre;
     return nuevoNodo;
 }
 
-void insertarABB(Nodo*& arbol, int n) {
+void insertarABB(Nodo*& arbol, int n, Nodo* padre) {
     if (arbol == NULL) {
-        Nodo* nuevoNodo = crearNodo(n);
+        Nodo* nuevoNodo = crearNodo(n,padre);
         arbol = nuevoNodo;
     }
     else {
         int valorRaiz = arbol->dato;
         if (n < valorRaiz) {
-            insertarABB(arbol->izq, n);  
+            insertarABB(arbol->izq, n, arbol);  
         }
         else {
-            insertarABB(arbol->der, n);
+            insertarABB(arbol->der, n, arbol);
         }
     }
 }
@@ -102,6 +104,99 @@ void InOrden(Nodo* arbol) {
     InOrdenAux(arbol, primero);
 }
 
+void PostOrdenAux(Nodo* arbol, bool& primero) {
+    if (arbol == NULL) {
+        return;
+    }
+    else {
+        PostOrdenAux(arbol->izq, primero);
+        PostOrdenAux(arbol->der, primero);
+        if (!primero) {
+            cout << "-";
+        }
+        cout << arbol->dato;
+        primero = false;
+    }
+}
+
+void PostOrden(Nodo* arbol) {
+    if (arbol == NULL) {
+        return;
+    }
+    bool primero = true;
+    PostOrdenAux(arbol, primero);
+}
+
+Nodo * buscarMinimo(Nodo* arbol) { //Funcion que busca el nodo minimo en un subarbol
+    if (arbol == NULL) {
+        return NULL;
+    }
+    else if (arbol->izq) {
+        return buscarMinimo(arbol->izq);
+    }
+    else {
+        return arbol;
+    }
+}
+
+void remplazar(Nodo* arbol, Nodo* nuevoNodo) {
+    if (arbol->padre) {
+        if (arbol->padre->izq == arbol) {
+            arbol->padre->izq = nuevoNodo;
+        } 
+        else if (arbol->padre->der == arbol) {
+            arbol->padre->der = nuevoNodo;
+        }
+    }
+    if (nuevoNodo) {
+        nuevoNodo->padre = arbol->padre;
+    }
+}
+
+void destruirNodo(Nodo* nodo) {
+    nodo->izq = NULL;
+    nodo->der = NULL;
+    nodo->padre = NULL;
+    delete nodo;
+}
+
+
+void eliminarNodo(Nodo* nodoEliminar) { //Funcion que elimina un Nodo y hace el remplazo, hay 3 tipos
+    if (nodoEliminar->izq && nodoEliminar->der) { // Si el nodo tiene dos hijos
+        Nodo* menor = buscarMinimo(nodoEliminar->der);
+        nodoEliminar->dato = menor->dato;
+        eliminarNodo(menor);
+    }
+    else if (nodoEliminar->izq) { // Si el nodo tiene solo hijo izquierdo
+        remplazar(nodoEliminar, nodoEliminar->izq);
+        destruirNodo(nodoEliminar);
+    }
+    else if (nodoEliminar->der) { // Si el nodo tiene solo hijo derecho
+        remplazar(nodoEliminar, nodoEliminar->der);
+        destruirNodo(nodoEliminar);
+    }
+    else { // Si el nodo no tiene hijos 
+        remplazar(nodoEliminar, NULL);
+        destruirNodo(nodoEliminar);
+    }
+}
+
+void eliminar(Nodo*arbol, int n) { // Funcion que busca el nodo a eliminar
+    if (arbol == NULL) {
+        return;
+    }
+    else if (arbol->dato == n) {
+        eliminarNodo(arbol);
+    }
+    else if (n < arbol->dato) {
+        eliminar(arbol->izq, n);
+    }
+    else {
+        eliminar(arbol->der, n);
+    }
+}
+
+
 void pausa() {
     cout << "\nPresione una tecla para continuar...";
     cin.ignore(); // Ignorar el '\n' del input anterior
@@ -112,6 +207,7 @@ int main() {
     int numero;
     int opcion;
     int contador = 0;
+    bool primero = true;
     do {
         system("clear");  // Limpia la pantalla (en Linux/WSL)
         cout << "\t.:MENU:." << endl;
@@ -120,7 +216,9 @@ int main() {
         cout << "3. Buscar un numero en el ABB" << endl;
         cout << "4. Recorrido PreOrden" << endl;
         cout << "5. Recorrido InOrden" << endl;
-        cout << "6. Salir" << endl;
+        cout << "6. Recorrido PostOrden" << endl;
+        cout << "7. Eliminar un nodo del ABB" << endl;
+        cout << "8. Salir" << endl;
         
         cout << "Ingrese una opcion: ";
         cin >> opcion;
@@ -129,7 +227,7 @@ int main() {
             case 1:
                 cout << "Ingrese un numero: ";
                 cin >> numero;
-                insertarABB(arbol, numero);
+                insertarABB(arbol, numero, NULL);
                 pausa();
                 break;
             case 2:
@@ -161,11 +259,24 @@ int main() {
                 pausa();
                 break;
             case 6:
-                cout << "Saliendo del programa..." << endl;
+                cout << "Recorrido PostOrden del ABB: ";
+                PostOrden(arbol);
+                cout << endl;   
+                pausa();
                 break;
+            case 7:
+                cout << "\nDigite el nodo que desea eliminar: ";
+                cin >> numero;
+                eliminar(arbol, numero);
+                cout << "Nodo eliminado correctamente." << endl;
+                pausa();
+                break;
+            case 8:
+                cout << "Saliendo del programa..." << endl;
+                break;   
             default:
                 cout << "Opcion invalida. Intente de nuevo." << endl;
                 pausa();
         }
-    } while (opcion != 6);
+    } while (opcion != 8);
 }
