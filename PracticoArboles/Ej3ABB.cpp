@@ -35,7 +35,66 @@ void insertarABB(int x, ABB& b) {
     }
 }
 
+bool perteneceABB(int x, ABB b) {
+    if (b == NULL) {
+        return false;
+    }
+    else if (x == b->elem) {
+        return true;
+    }
+    else if (x < b->elem) {
+        return perteneceABB(x, b->izq);
+    }
+    else if (x > b->elem) {
+        return perteneceABB(x, b->der);
+    }
+    return false; // Caso base, no encontrado
+}
 
+ABB maxABB (ABB b) {
+    if (b->der == NULL) {
+        return b;
+    }
+    else {
+        return maxABB(b->der);
+    }
+}
+void removerMaxABB(ABB& b) {
+    if (b == NULL) {
+        return;
+    }
+    else if (b->der == NULL) {
+        if (b->izq == NULL) {
+            delete b;
+            b = NULL;
+        }
+        else {  
+            ABB aux = b;
+            b = b->izq;
+            delete aux; 
+        }
+    }
+    else if (b->der != NULL) {
+        removerMaxABB(b->der);
+    }
+    return;
+}
+
+void removerABB (int x, ABB& b) {
+    if (b == NULL) {
+        return;
+    }
+    else if (b->elem == x) {
+        eliminarNodo(b);
+    }
+    else if (x < b->elem) {
+        removerABB(b->izq, x);
+    }
+    else {
+        removerABB(b->der, x);
+    }
+}
+}
 
 
 
@@ -51,12 +110,16 @@ int main() {
     int opcion;
     ABB arbol = NULL;   
     do {
-        system("clear");  // Limpia la pantalla (en Linux/WSL)
+        #ifdef _WIN32
+            system("cls");  // Windows
+        #else
+            system("clear");  // Linux/WSL
+        #endif
         cout << "\t Bienvenido al programa de Arboles hecho por Facundo Pintado" << endl;
         cout << "1. Insertar un numero en el ABB" << endl;
-        cout << "2. Salir" << endl;
-
-
+        cout << "2. Ingrese un numero para buscar dentro del ABB" << endl;
+        cout << "3. Salir" << endl;
+        
         cout << " Ingrese una opcion: ";
         cin >> opcion;
 
@@ -71,7 +134,21 @@ int main() {
                 cin.ignore(); // Ignorar el '\n' del input anterior
                 cin.get();    // Esperar a que el usuario presione una tecla
                 break;
+            
             case 2:
+                cout << "Ingrese el numero a buscar: ";
+                cin >> numero;
+                if (perteneceABB(numero,arbol)) {
+                    cout << "El numero " << numero << " Se encuentra en el arbol." << endl;
+                }
+                else {
+                    cout << "El numero " << numero << " No se encuentra en el Arbol." << endl;
+                }
+                cout << "Presiona algun numero para continuar pinche cabron :)";
+                cin.ignore();
+                cin.get();
+                break;
+            case 3:
                 cout << "Saliendo del programa. ¡Hasta luego!" << endl;
                 break;
             default:
@@ -80,7 +157,7 @@ int main() {
                 cin.ignore(); // Ignorar el '\n' del input anterior
                 cin.get();    // Esperar a que el usuario presione una tecla
         }
-    }   while (opcion != 2);
+    }   while (opcion != 3);
     return 0;
 
 }
