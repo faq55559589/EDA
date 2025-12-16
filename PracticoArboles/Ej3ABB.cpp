@@ -51,6 +51,18 @@ bool perteneceABB(int x, ABB b) {
     return false; // Caso base, no encontrado
 }
 
+
+ABB minABB (ABB b) { //Funcion que busca el nodo minimo en un subarbol
+    if (b == NULL) {
+        return NULL;
+    }
+    else if (b->izq) {
+        return minABB(b->izq);
+    }
+    else {
+        return b;
+    }
+}
 ABB maxABB (ABB b) {
     if (b->der == NULL) {
         return b;
@@ -59,25 +71,19 @@ ABB maxABB (ABB b) {
         return maxABB(b->der);
     }
 }
+
 void removerMaxABB(ABB& b) {
     if (b == NULL) {
         return;
     }
-    else if (b->der == NULL) {
-        if (b->izq == NULL) {
-            delete b;
-            b = NULL;
-        }
-        else {  
-            ABB aux = b;
-            b = b->izq;
-            delete aux; 
-        }
-    }
     else if (b->der != NULL) {
         removerMaxABB(b->der);
     }
-    return;
+    else {
+        ABB aux = b;
+        b = b->izq; 
+        delete aux;
+    }
 }
 
 void removerABB (int x, ABB& b) {
@@ -88,16 +94,37 @@ void removerABB (int x, ABB& b) {
         eliminarNodo(b);
     }
     else if (x < b->elem) {
-        removerABB(b->izq, x);
+        removerABB(x , b->izq);
     }
     else {
-        removerABB(b->der, x);
+        removerABB(x, b->der);
     }
 }
+void remplazarABB(int x, ABB& b) {
+
+} 
+
+void eliminarNodo(ABB & b){
+       if (b->izq && b->der) { // Si el nodo tiene dos hijos
+        ABB maxIzq = maxABB(b->izq);
+        b->elem = maxIzq->elem;
+        remplazarABB(maxIzq->elem, b->izq);
+    }
+    else if (b->izq) { // Si el nodo tiene solo hijo izquierdo
+        ABB aux = b;
+        b = b->izq;
+        delete aux;
+    }
+    else if (b->der) { // Si el nodo tiene solo hijo derecho
+        ABB aux = b;
+        b = b->der;
+        delete aux;
+    }
+    else { // Si el nodo no tiene hijos 
+        delete b;
+        b = NULL;
+    }
 }
-
-
-
 
 
 

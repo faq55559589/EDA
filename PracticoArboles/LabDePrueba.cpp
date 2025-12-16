@@ -139,6 +139,41 @@ Nodo * buscarMinimo(Nodo* arbol) { //Funcion que busca el nodo minimo en un suba
     }
 }
 
+Nodo * buscarMaximo(Nodo* arbol) {
+    if (arbol->der == NULL) {
+        return arbol;
+    }
+    else {
+        return buscarMaximo(arbol->der);
+    }
+}
+
+void removerMaximo(Nodo*& arbol) {
+    if (arbol == NULL) {
+        return;
+    }
+    else if (arbol->der != NULL) {
+        removerMaximo(arbol->der);
+    }
+    else {
+        Nodo* aux = arbol;
+        arbol = arbol->izq; 
+        delete aux;
+    }
+}
+void removerMinimo(Nodo*& arbol) {
+    if (arbol == NULL) {
+        return;
+    }
+    else if (arbol->izq != NULL) {
+        removerMinimo(arbol->izq);
+    }
+    else {
+        Nodo* aux = arbol;
+        arbol = arbol->der; 
+        delete aux;
+    }
+}
 void remplazar(Nodo* arbol, Nodo* nuevoNodo) {
     if (arbol->padre) {
         if (arbol->padre->izq == arbol) {
