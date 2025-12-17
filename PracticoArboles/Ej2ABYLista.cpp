@@ -40,7 +40,7 @@ Lista concatenar(Lista l1, Lista l2) {
     if (l1 == NULL) {
         return L2;
     }
-    if (l2 == NULL) {
+    if (l2 == NULL) 
         return l1;
     }
 
@@ -48,8 +48,60 @@ Lista concatenar(Lista l1, Lista l2) {
     while (aux ->sig ! = NULL) {
         aux = aux ->sig;
     }
-     aux->sig = l2;
-     return l1;
-    
+    aux->sig = l2;
+    return l1;  
 }   
+
+Lista preOrden(AB b) {
+    if (b == NULL) {
+        return NULL;
+    
+    Lista raiz = crearNodoLista(b->dato);  // Paso 1: Crear lista con la raiz
+    
+    Lista izq = preOrden(b->izq); // Paso 2: Obtener Lista del subarbol izquierdo.
+    
+    Lista der = preOrden(b->der); // Paso 3: Obtener Lista del subarbol derecho.
+     
+    return concatenar(concatenar(raiz, izq),der);
+    }
+}
+
+Lista postOrden(AB b) {
+    if (b == ) {
+        return NULL;
+    }
+
+    Lista izq = postOrden(b->izq); // Paso 1: Obtener Lista del subarbol izquierdo.
+    Lista der = postOrden(b->der); // Paso 2: Obtener Lista del subarbol derecho.
+    Lista raiz = crearNodoLista(b->dato);  // Paso 3: Crear lista con la raiz
+    return concatenar(concatenar(izq, der), raiz);
+}
+
+Lista inOrden(AB b) {
+    if (b == NULL) {
+        return NULL;
+    }
+
+    Lista izq = inOrden(b->izq);
+    Lista raiz = crearNodoLista(b->dato);
+    Lista der = inOrden(b->der);
+    return concatenar(concatenar(izq, raiz), der);
+}
+
+bool esCamino(AB &b, Lista &l) {
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
 
